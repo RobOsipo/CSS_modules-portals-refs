@@ -5,15 +5,19 @@ import Button from '../UI/Button'
 import ErrorModal from '../UI/ErrorModal'
 
 const AddUser = (props) => {
-    const [enteredUsername, setEnteredUsername] = React.useState('')
-    const [enteredAge, setEnteredAge] = React.useState('')
+    // refs
+    const nameInputRef = React.useRef()
+    const ageInputRef = React.useRef()
+    // state
     const [error, setError] = React.useState()
 
     const addUserHandler = (e) => {
         e.preventDefault();
+        const enteredName = nameInputRef.current.value
+        const enteredUserAge = ageInputRef.current.value
 
         // ? When I add a + in front of a variable it makes sure its a number? need to research
-        if (+enteredAge < 1 || !enteredAge || !enteredUsername) {
+        if (+enteredUserAge < 1 || !enteredUserAge || !enteredName) {
            setError({
                title: 'Invalid Input',
                message: 'Please enter a valid name and age (non-empty).'
@@ -22,24 +26,18 @@ const AddUser = (props) => {
         }
 
         
-        props.onAddUser(enteredUsername, enteredAge)
-        setEnteredUsername('')
-        setEnteredAge('')
+        props.onAddUser(enteredName, enteredUserAge)
+//! Normally I dont want to manipulate the DOM directly from inside React, but in the case of resetting an input its ok
+        nameInputRef.current.value = ''
+        ageInputRef.current.value = ''
+        
     }
 
-    const usernameChangeHandler = (e) => {
-        setEnteredUsername(e.target.value);
-    }
-
-    const ageChangeHandler = (e) => {
-        setEnteredAge(e.target.value);
-    }
+  
 
     const errorHandler = () => {
         setError(null)
     }
-
-   
 
 
   return (
@@ -50,14 +48,14 @@ const AddUser = (props) => {
         <Card className={classes.input}>
             <form onSubmit={addUserHandler}>
                 <label htmlFor="username">Username</label>
-                <input value={enteredUsername} id="username" type="text" onChange={usernameChangeHandler} />
+                <input id="username" type="text" ref={nameInputRef} />
                 <label htmlFor="age">Age</label>
-                <input value={enteredAge} id="age" type="number" onChange={ageChangeHandler} />
+                <input id="age" type="number" ref={ageInputRef} />
 
                 <Button type="submit">Add User</Button>
             </form>
          </Card>
-         </div>
+    </div>
   )
 }
 
